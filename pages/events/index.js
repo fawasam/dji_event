@@ -3,7 +3,7 @@ import { API_URL } from "@/config/index";
 import Layout from "@/components/Layout";
 import EventItem from "@/components/EventItem";
 
-export default function HomePage({ events }) {
+export default function EventPage({ events }) {
   return (
     <Layout>
       <h1>Upcoming Events</h1>
@@ -28,7 +28,7 @@ export async function getStaticProps() {
   const events = await res.json();
 
   return {
-    props: { events: events.slice(0, 3) },
+    props: { events },
     revalidate: 1,
   };
 }
