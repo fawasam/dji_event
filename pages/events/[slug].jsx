@@ -4,15 +4,31 @@ import styles from "@/styles/Event.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const SingleEvent = ({ evt }) => {
+  const router = useRouter();
   console.log(evt);
-  const deleteEvent = () => {};
+  const deleteEvent = async () => {
+    if (confirm("Are you sure you want to delete this event?")) {
+      const res = await fetch(`${API_URL}/api/events/${evt.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.message);
+      } else {
+        router.push("/events");
+      }
+    }
+  };
   return (
     <Layout>
       <div className={styles.event}>
         <div className={styles.controls}>
-          <Link href={`/events/edit/${evt.id}`}>
+          <Link href={`/events/edit/${evt?.id}`}>
             <a>
               {" "}
               <FaPencilAlt />
@@ -25,25 +41,26 @@ const SingleEvent = ({ evt }) => {
           </a>
         </div>
         <span>
-          {evt.attributes.date} at {evt.attributes.time}
+          {evt?.attributes.date} at {evt?.attributes.time}
         </span>
-        <h1>{evt.attributes.name}</h1>
-        {evt.attributes.image && (
+        <h1>{evt?.attributes.name}</h1>
+        <ToastContainer />
+        {evt?.attributes.image.data?.attributes && (
           <div className={styles.image}>
             <Image
-              src={evt.attributes.image.data.attributes.formats.large.url}
+              src={evt?.attributes.image.data?.attributes.formats.large.url}
               width={960}
               height={600}
-              alt={evt.name}
+              alt={evt?.name}
             />
           </div>
         )}
         <h3>Performers:</h3>
-        <p>{evt.attributes.performers}</p>
+        <p>{evt?.attributes.performers}</p>
         <h3>Description</h3>
-        <p>{evt.attributes.description}</p>
-        <h3>Venue: {evt.attributes.venue}</h3>
-        <p>{evt.attributes.address}</p>
+        <p>{evt?.attributes.description}</p>
+        <h3>Venue: {evt?.attributes.venue}</h3>
+        <p>{evt?.attributes.address}</p>
         <Link href="/events">
           <a className={styles.back}>{"<"} Go Back</a>
         </Link>
